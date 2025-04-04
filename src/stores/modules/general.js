@@ -85,6 +85,7 @@ export const useGeneralStore = defineStore("general", {
       console.log("STORE: Get all organisation names");
       try {
         let result = await getAllOrganisationNames();
+        console.log('result.data: ',result.data)
         if (result.error === 0) {
           this.OrganisationNames = result.data;
         } else {

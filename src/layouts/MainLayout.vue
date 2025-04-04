@@ -1,9 +1,6 @@
 <template>
   <q-layout view="hHh lpR fFf">
     <NavBar></NavBar>
-    <q-page-container>
-      <router-view />
-    </q-page-container>
     <q-dialog v-model="errorDialog">
       <q-card>
         <q-card-section>
@@ -34,12 +31,4 @@ const clearError = () => {
 </script>
 
 <style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
 </style>

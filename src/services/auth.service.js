@@ -1,44 +1,45 @@
 import { authAxiosAgent } from "src/services/axios.service";
 
 async function signIn(login, password) {
-    try {
-        const response = await authAxiosAgent.post("/auth/signin", { login, password });
-        return response.data;
-    } catch (err) {
-        return {
-            error: 1,
-            data: err.response ? err.response.data : "Network error",
-        };
-    }
+  try {
+    console.log('login, password: ', login, password)
+    const response = await authAxiosAgent.post("/auth/signin", { login, password });
+    return response.data;
+  } catch (err) {
+    return {
+      error: 1,
+      data: err.response ? err.response.data : "Network error",
+    };
+  }
 }
 
 async function getUser(login) {
-    try {
-        const response = await authAxiosAgent.get(`/user/getuser/${login}`);
-        return response.data;
-    } catch (err) {
-        return {
-            error: 1,
-            data: err.response ? err.response.data : "Network error",
-        };
-    }
+  try {
+    const response = await authAxiosAgent.get(`/user/getuser/${login}`);
+    return response.data;
+  } catch (err) {
+    return {
+      error: 1,
+      data: err.response ? err.response.data : "Network error",
+    };
+  }
 }
 
 async function registerUser(login, password, hero, captchaToken) {
-    try {
-        const response = await authAxiosAgent.post("/user/register", {
-            login,
-            password,
-            hero,
-            captchaToken,
-        });
-        return response.data;
-    } catch (err) {
-        return {
-            error: 1,
-            data: err.response ? err.response.data : "Network error",
-        };
-    }
+  try {
+    const response = await authAxiosAgent.post("/user/register", {
+      login,
+      password,
+      hero,
+      captchaToken,
+    });
+    return response.data;
+  } catch (err) {
+    return {
+      error: 1,
+      data: err.response ? err.response.data : "Network error",
+    };
+  }
 }
 
 export { signIn, getUser, registerUser };

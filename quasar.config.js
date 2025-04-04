@@ -86,9 +86,7 @@ export default defineConfig((ctx) => {
 
     // https://v2.quasar.dev/quasar-cli-webpack/quasar-config-file#framework
     framework: {
-      config: {},
-      components: 'auto', // Enable auto-import for Quasar components
-      plugins: [] // Add any Quasar plugins you are using
+      all: 'auto'
     },
 
     // animations: 'all', // --- includes all animations

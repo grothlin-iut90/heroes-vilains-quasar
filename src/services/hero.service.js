@@ -1,40 +1,39 @@
 import { getRequest, postRequest, putRequest, authAxiosAgent } from "src/services/axios.service";
 
+async function getAliasesFromAPI(){
+  return getRequest("/heroes/getaliases", "getAliases")
+}
 async function getAliases() {
-  return await getRequest("/heroes/getaliases", "getAliases");
+  return await getAliasesFromAPI()
 }
 
-async function createHero(hero) {
-  return await postRequest("/heroes/create", hero, "createHero");
+async function createHeroFromAPI(hero){
+  return await postRequest("/heroes/create", hero, "createHero")
+}
+async function createHero(hero){
+  return await createHeroFromAPI(hero)
 }
 
-async function updateHero(hero, secret) {
-  return await putRequest(
-    "/heroes/update",
-    hero,
-    "updateHero",
-    { params: { "org-secret": secret } }
-  );
+async function updateHeroFromAPI(hero, secret){
+  return await putRequest("/heroes/update", hero, "updateHero", {"params": {"org-secret": secret}})
+}
+async function updateHero(hero, secret){
+  return await updateHeroFromAPI(hero, secret)
 }
 
-async function getHeroByID(id, secret) {
-  return await getRequest(
-    `/heroes/getbyid/${id}`,
-    "getHeroByID",
-    { params: { "org-secret": secret } }
-  );
+async function getHeroByIDFromAPI(id, secret){
+  return await getRequest(`/heroes/getbyid/${id}`, "getHeroByID", {"params": {"org-secret": secret}})
+}
+async function getHeroByID(id, secret){
+  return await getHeroByIDFromAPI(id, secret)
+}
+
+async function authUpdateHeroFromAPI(hero) {
+  return await authAxiosAgent.put("/heroes/authupdate", hero, "authUpdateHero");
 }
 
 async function authUpdateHero(hero) {
-  try {
-    const response = await authAxiosAgent.put("/heroes/authupdate", hero);
-    return response.data;
-  } catch (err) {
-    return {
-      error: 1,
-      data: err.response ? err.response.data : "Network error",
-    };
-  }
+  return await authUpdateHeroFromAPI(hero);
 }
 
 export {
@@ -43,4 +42,4 @@ export {
   updateHero,
   getHeroByID,
   authUpdateHero,
-};
+}

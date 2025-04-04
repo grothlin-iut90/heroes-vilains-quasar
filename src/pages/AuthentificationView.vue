@@ -9,10 +9,10 @@
 
 <script setup>
 import { ref } from 'vue'
-import { useOrganisationPasswordStore } from 'src/stores/modules/secret'
+import { useSecretStore } from 'src/stores/modules/secret'
 
 const secretPhrase = ref('')
-const organisationPasswordStore = useOrganisationPasswordStore()
+const organisationPasswordStore = useSecretStore()
 
 const setOrganisationPassword = () => {
   organisationPasswordStore.setOrganisationPassword(secretPhrase.value)

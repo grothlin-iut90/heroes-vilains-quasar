@@ -2,7 +2,7 @@
   <q-page>
     <h1>Organisations</h1>
     <q-btn color="primary" @click="newOrganisation" class="mb-4">Ajouter</q-btn>
-    <OrganisationsList :organisation-names="sortedOrganisationNames" />
+    <OrganisationsList :organisationNames="organisationNames" />
     <NewOrganisationDialog ref="addOrgDialogRef" />
   </q-page>
 </template>

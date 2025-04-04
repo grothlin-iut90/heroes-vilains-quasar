@@ -30,13 +30,13 @@ export default {
 
     const createNewHero = async (hero) => {
       dialog.value = false
-      const creation = await generalStore.dispatch('general/createHero', hero)
+      const creation = await generalStore.createHero(hero)
       const id = creation._id
       const data = {
         idTeam: currentTeam.value._id,
         heroes: [id],
       }
-      await generalStore.dispatch('general/addHeroesToTeam', data)
+      await generalStore.addHeroesToTeam(data)
     }
 
     const recruitHero = async () => {
@@ -45,12 +45,12 @@ export default {
         idTeam: currentTeam.value._id,
         heroes: [selectedHero.value._id],
       }
-      await generalStore.dispatch('general/addHeroesToTeam', data)
+      await generalStore.addHeroesToTeam(data)
       selectedHero.value = null
     }
 
     onMounted(() => {
-      generalStore.dispatch('general/getHeroAliases')
+      generalStore.getHeroAliases()
     })
 
     return {

@@ -1,25 +1,31 @@
 <script>
 import { ref, computed } from 'vue'
-import { useOrganisationPasswordStore } from 'src/stores/modules/secret'
+import { useRouter } from 'vue-router' // Import useRouter
+import { useSecretStore } from 'src/stores/modules/secret'
 
 export default {
   name: 'NavBar',
   setup() {
     const drawer = ref(false)
     const showPassword = ref(false)
-    const organisationPasswordStore = useOrganisationPasswordStore()
+    const organisationPasswordStore = useSecretStore()
+    const router = useRouter() // Initialize the router
 
-    const organisationPassword = computed(() => organisationPasswordStore.OrganisationPassword)
+    // Define a writable computed property
+    const organisationPassword = computed({
+      get: () => organisationPasswordStore.OrganisationPassword,
+      set: (value) => organisationPasswordStore.setOrganisationPassword(value),
+    })
 
-    const updateSecret = (value) => {
-      organisationPasswordStore.setOrganisationPassword(value)
+    const redirectToLogin = () => {
+      router.push('/login')
     }
 
     return {
       drawer,
       showPassword,
       organisationPassword,
-      updateSecret,
+      redirectToLogin,
     }
   },
 }
@@ -57,7 +63,7 @@ export default {
           dense
           outlined
         />
-        <q-btn label="Se connecter" />
+        <q-btn label="Se connecter" @click="redirectToLogin" />
       </q-toolbar>
     </q-header>
 

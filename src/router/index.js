@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
-// import { getActivePinia } from 'pinia'
+import { useAuthStore } from 'src/stores/modules/auth'
 import routes from './routes.js'
 
 const router = createRouter({
@@ -7,15 +7,15 @@ const router = createRouter({
   routes, // Use the imported routes array
 });
 
-// router.beforeEach((to, from, next) => {
-//   const pinia = getActivePinia();
-//   const isAuthenticated = pinia ? pinia.state.value.auth.isAuthenticated : false;
+router.beforeEach((to, from, next) => {
+  const authStore = useAuthStore(); // Access the auth store
+  const isAuthenticated = authStore.isAuthenticated;
 
-//   if (to.name !== "login" && to.name !== "register" && !isAuthenticated) {
-//       next({ name: "login" });
-//   } else {
-//       next();
-//   }
-// });
+  if (to.name !== "login" && to.name !== "register" && !isAuthenticated) {
+    next({ name: "login" });
+  } else {
+    next();
+  }
+});
 
 export default router
