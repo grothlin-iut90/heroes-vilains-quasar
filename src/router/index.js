@@ -1,30 +1,21 @@
-import { defineRouter } from '#q-app/wrappers'
-import { createRouter, createMemoryHistory, createWebHistory, createWebHashHistory } from 'vue-router'
+import { createRouter, createWebHistory } from 'vue-router'
+// import { getActivePinia } from 'pinia'
 import routes from './routes.js'
 
-/*
- * If not building with SSR mode, you can
- * directly export the Router instantiation;
- *
- * The function below can be async too; either use
- * async/await or return a Promise which resolves
- * with the Router instance.
- */
+const router = createRouter({
+  history: createWebHistory(),
+  routes, // Use the imported routes array
+});
 
-export default defineRouter(function (/* { store, ssrContext } */) {
-  const createHistory = process.env.SERVER
-    ? createMemoryHistory
-    : (process.env.VUE_ROUTER_MODE === 'history' ? createWebHistory : createWebHashHistory)
+// router.beforeEach((to, from, next) => {
+//   const pinia = getActivePinia();
+//   const isAuthenticated = pinia ? pinia.state.value.auth.isAuthenticated : false;
 
-  const Router = createRouter({
-    scrollBehavior: () => ({ left: 0, top: 0 }),
-    routes,
+//   if (to.name !== "login" && to.name !== "register" && !isAuthenticated) {
+//       next({ name: "login" });
+//   } else {
+//       next();
+//   }
+// });
 
-    // Leave this as is and make changes in quasar.conf.js instead!
-    // quasar.conf.js -> build -> vueRouterMode
-    // quasar.conf.js -> build -> publicPath
-    history: createHistory(process.env.VUE_ROUTER_BASE)
-  })
-
-  return Router
-})
+export default router

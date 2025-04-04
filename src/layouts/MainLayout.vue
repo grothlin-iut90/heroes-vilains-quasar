@@ -19,18 +19,18 @@
 </template>
 
 <script setup>
-import { computed } from "vue";
-import NavBar from "@/components/NavBar.vue";
-import { useErrorStore } from "@/store/modules/errors";
+import { computed } from 'vue'
+import NavBar from 'src/components/NavBar.vue'
+import { useErrorStore } from 'src/stores/modules/errors'
 
-const errorStore = useErrorStore();
+const errorStore = useErrorStore()
 
-const errorMessage = computed(() => errorStore.errorMessage);
-const errorDialog = computed(() => !!errorStore.errorMessage);
+const errorMessage = computed(() => errorStore.errorMessage)
+const errorDialog = computed(() => !!errorStore.errorMessage)
 
 const clearError = () => {
-  errorStore.clearError();
-};
+  errorStore.clearError()
+}
 </script>
 
 <style>

@@ -21,50 +21,50 @@
 </template>
 
 <script setup>
-import { ref, computed } from "vue";
-import { useRouter } from "vue-router";
-import { useGeneralStore } from "@/store/modules/general";
-import AddHeroDialog from "@/components/AddHeroDialog.vue";
-import ConfirmDialog from "@/components/ConfirmDialog.vue";
-import EditHeroDialog from "@/components/EditHeroDialog.vue";
+import { ref, computed } from 'vue'
+import { useRouter } from 'vue-router'
+import { useGeneralStore } from 'src/stores/modules/general'
+import AddHeroDialog from 'src/components/AddHeroDialog.vue'
+import ConfirmDialog from 'src/components/ConfirmDialog.vue'
+import EditHeroDialog from 'src/components/EditHeroDialog.vue'
 
-const router = useRouter();
-const generalStore = useGeneralStore();
+const router = useRouter()
+const generalStore = useGeneralStore()
 
-const selectedHero = ref({ publicName: "", realName: "", powers: [] });
-const addHeroDialogRef = ref(null);
-const editHeroDialogRef = ref(null);
-const confirmDialogRef = ref(null);
+const selectedHero = ref({ publicName: '', realName: '', powers: [] })
+const addHeroDialogRef = ref(null)
+const editHeroDialogRef = ref(null)
+const confirmDialogRef = ref(null)
 
-const CurrentTeam = computed(() => generalStore.CurrentTeam);
+const CurrentTeam = computed(() => generalStore.CurrentTeam)
 
 const columns = [
-  { name: "publicName", label: "Nom public", field: "publicName" },
-  { name: "realName", label: "Nom réel", field: "realName" },
-  { name: "actions", label: "Actions", align: "right" },
-];
+  { name: 'publicName', label: 'Nom public', field: 'publicName' },
+  { name: 'realName', label: 'Nom réel', field: 'realName' },
+  { name: 'actions', label: 'Actions', align: 'right' },
+]
 
 const openAddDialog = () => {
-  addHeroDialogRef.value.displayDialog();
-};
+  addHeroDialogRef.value.displayDialog()
+}
 
 const removeHero = async (hero) => {
   confirmDialogRef.value.displayDialog(
-    "Suppression",
+    'Suppression',
     `Voulez-vous vraiment enlever de l'équipe le héros ${hero.publicName}`,
     () => {
-      generalStore.removeHeroesFromTeam({ idTeam: CurrentTeam.value._id, heroes: [hero._id] });
-    }
-  );
-};
+      generalStore.removeHeroesFromTeam({ idTeam: CurrentTeam.value._id, heroes: [hero._id] })
+    },
+  )
+}
 
 const selectHero = (hero) => {
-  selectedHero.value = hero;
-  editHeroDialogRef.value.displayDialog();
-};
+  selectedHero.value = hero
+  editHeroDialogRef.value.displayDialog()
+}
 
 const update = async (hero) => {
-  hero._id = selectedHero.value._id;
-  await generalStore.updateHero(hero);
-};
+  hero._id = selectedHero.value._id
+  await generalStore.updateHero(hero)
+}
 </script>

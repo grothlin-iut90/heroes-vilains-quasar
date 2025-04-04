@@ -1,60 +1,57 @@
 <script>
-import { ref, computed, onMounted } from "vue";
-import { useGeneralStore } from '@/store/modules/general';
-import EditHero from "@/components/EditHero.vue";
+import { ref, computed, onMounted } from 'vue'
+import { useGeneralStore } from 'src/stores/modules/general'
+import EditHero from 'src/components/EditHero.vue'
 
 export default {
-  name: "AddHeroDialog",
+  name: 'AddHeroDialog',
   components: { EditHero },
   setup() {
-    const generalStore = useGeneralStore();
-    const dialog = ref(false);
-    const selectedHero = ref(null);
-    const tab = ref(0);
-    const emptyHero = ref({ publicName: "", realName: "", powers: [] });
+    const generalStore = useGeneralStore()
+    const dialog = ref(false)
+    const selectedHero = ref(null)
+    const tab = ref(0)
+    const emptyHero = ref({ publicName: '', realName: '', powers: [] })
 
-    const heroAliases = computed(() => generalStore.state.general.HeroAliases);
-    const currentTeam = computed(() => generalStore.state.general.CurrentTeam);
+    const heroAliases = computed(() => generalStore.state.general.HeroAliases)
+    const currentTeam = computed(() => generalStore.state.general.CurrentTeam)
 
     const sortedHeroes = computed(() =>
       heroAliases.value
-        .filter(
-          (obj1) =>
-            !currentTeam.value.members.some((obj2) => obj1._id === obj2._id)
-        )
-        .sort((a, b) => a.publicName > b.publicName)
-    );
+        .filter((obj1) => !currentTeam.value.members.some((obj2) => obj1._id === obj2._id))
+        .sort((a, b) => a.publicName > b.publicName),
+    )
 
-    const isValidForm = computed(() => selectedHero.value !== null);
+    const isValidForm = computed(() => selectedHero.value !== null)
 
     const displayDialog = () => {
-      dialog.value = true;
-    };
+      dialog.value = true
+    }
 
     const createNewHero = async (hero) => {
-      dialog.value = false;
-      const creation = await generalStore.dispatch("general/createHero", hero);
-      const id = creation._id;
+      dialog.value = false
+      const creation = await generalStore.dispatch('general/createHero', hero)
+      const id = creation._id
       const data = {
         idTeam: currentTeam.value._id,
         heroes: [id],
-      };
-      await generalStore.dispatch("general/addHeroesToTeam", data);
-    };
+      }
+      await generalStore.dispatch('general/addHeroesToTeam', data)
+    }
 
     const recruitHero = async () => {
-      dialog.value = false;
+      dialog.value = false
       const data = {
         idTeam: currentTeam.value._id,
         heroes: [selectedHero.value._id],
-      };
-      await generalStore.dispatch("general/addHeroesToTeam", data);
-      selectedHero.value = null;
-    };
+      }
+      await generalStore.dispatch('general/addHeroesToTeam', data)
+      selectedHero.value = null
+    }
 
     onMounted(() => {
-      generalStore.dispatch("general/getHeroAliases");
-    });
+      generalStore.dispatch('general/getHeroAliases')
+    })
 
     return {
       dialog,
@@ -66,9 +63,9 @@ export default {
       displayDialog,
       createNewHero,
       recruitHero,
-    };
+    }
   },
-};
+}
 </script>
 
 <template>
@@ -91,7 +88,13 @@ export default {
             </q-card-section>
             <q-card-actions align="right">
               <q-btn flat label="Annuler" color="negative" @click="dialog = false" />
-              <q-btn flat label="Valider" color="positive" :disable="!isValidForm" @click="recruitHero" />
+              <q-btn
+                flat
+                label="Valider"
+                color="positive"
+                :disable="!isValidForm"
+                @click="recruitHero"
+              />
             </q-card-actions>
           </q-card>
         </q-tab-panel>

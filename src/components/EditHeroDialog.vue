@@ -1,9 +1,9 @@
 <script>
-import { ref } from "vue";
-import EditHero from "@/components/EditHero.vue";
+import { ref } from 'vue'
+import EditHero from 'src/components/EditHero.vue'
 
 export default {
-  name: "EditHeroDialog",
+  name: 'EditHeroDialog',
   components: { EditHero },
   props: {
     hero: {
@@ -12,24 +12,24 @@ export default {
     },
   },
   setup(props, { emit }) {
-    const dialog = ref(false);
+    const dialog = ref(false)
 
     const displayDialog = () => {
-      dialog.value = true;
-    };
+      dialog.value = true
+    }
 
     const saveHero = (updatedHero) => {
-      emit("valid", updatedHero);
-      dialog.value = false;
-    };
+      emit('valid', updatedHero)
+      dialog.value = false
+    }
 
     return {
       dialog,
       displayDialog,
       saveHero,
-    };
+    }
   },
-};
+}
 </script>
 
 <template>

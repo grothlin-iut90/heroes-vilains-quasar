@@ -11,28 +11,28 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
-import { useRouter } from "vue-router";
-import { useAuthStore } from "@/store/modules/auth";
+import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+import { useAuthStore } from 'src/stores/modules/auth'
 
-const router = useRouter();
-const authStore = useAuthStore();
+const router = useRouter()
+const authStore = useAuthStore()
 
-const loginInput = ref("");
-const password = ref("");
-const valid = ref(false);
-const errorMessage = ref("");
+const loginInput = ref('')
+const password = ref('')
+const valid = ref(false)
+const errorMessage = ref('')
 
 const submit = async () => {
   const success = await authStore.login({
     login: loginInput.value,
     password: password.value,
-  });
+  })
   if (success) {
-    await authStore.fetchUser(loginInput.value);
-    router.push("/");
+    await authStore.fetchUser(loginInput.value)
+    router.push('/')
   } else {
-    errorMessage.value = "Invalid login or password.";
+    errorMessage.value = 'Invalid login or password.'
   }
-};
+}
 </script>

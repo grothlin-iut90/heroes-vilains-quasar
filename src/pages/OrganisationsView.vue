@@ -8,31 +8,29 @@
 </template>
 
 <script setup>
-import { computed, ref, watch, onMounted } from "vue";
-import OrganisationsList from "@/components/OrganisationsList.vue";
-import NewOrganisationDialog from "@/components/NewOrganisationDialog.vue";
-import { useGeneralStore } from "@/store/modules/general";
+import { computed, ref, watch, onMounted } from 'vue'
+import OrganisationsList from 'src/components/OrganisationsList.vue'
+import NewOrganisationDialog from 'src/components/NewOrganisationDialog.vue'
+import { useGeneralStore } from 'src/stores/modules/general'
 
-const generalStore = useGeneralStore();
-const addOrgDialogRef = ref(null);
+const generalStore = useGeneralStore()
+const addOrgDialogRef = ref(null)
 
-const organisationNames = computed(() => generalStore.OrganisationNames);
-const sortedOrganisationNames = ref([]);
+const organisationNames = computed(() => generalStore.OrganisationNames)
+const sortedOrganisationNames = ref([])
 
 const newOrganisation = () => {
-  addOrgDialogRef.value.displayDialog();
-};
+  addOrgDialogRef.value.displayDialog()
+}
 
 onMounted(() => {
-  generalStore.getOrganisations();
+  generalStore.getOrganisations()
   sortedOrganisationNames.value = [...organisationNames.value].sort((a, b) =>
-    a.name.localeCompare(b.name)
-  );
-});
+    a.name.localeCompare(b.name),
+  )
+})
 
 watch(organisationNames, (newVal) => {
-  sortedOrganisationNames.value = [...newVal].sort((a, b) =>
-    a.name.localeCompare(b.name)
-  );
-});
+  sortedOrganisationNames.value = [...newVal].sort((a, b) => a.name.localeCompare(b.name))
+})
 </script>

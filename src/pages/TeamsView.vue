@@ -8,21 +8,21 @@
 </template>
 
 <script setup>
-import { onMounted, ref, computed } from "vue";
-import TeamsList from "@/components/TeamsList.vue";
-import NewTeamDialog from "@/components/NewTeamDialog.vue";
-import { useGeneralStore } from "@/store/modules/general";
+import { onMounted, ref, computed } from 'vue'
+import TeamsList from 'src/components/TeamsList.vue'
+import NewTeamDialog from 'src/components/NewTeamDialog.vue'
+import { useGeneralStore } from 'src/stores/modules/general'
 
-const generalStore = useGeneralStore();
-const newTeamDialogRef = ref(null);
+const generalStore = useGeneralStore()
+const newTeamDialogRef = ref(null)
 
-const Teams = computed(() => generalStore.Teams);
+const Teams = computed(() => generalStore.Teams)
 
 const newTeam = () => {
-  newTeamDialogRef.value.displayDialog();
-};
+  newTeamDialogRef.value.displayDialog()
+}
 
 onMounted(() => {
-  generalStore.getTeams();
-});
+  generalStore.getTeams()
+})
 </script>

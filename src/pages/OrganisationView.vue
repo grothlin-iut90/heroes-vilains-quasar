@@ -20,40 +20,40 @@
 </template>
 
 <script setup>
-import { computed, ref } from "vue";
-import { useRouter } from "vue-router";
-import AddTeamDialog from "@/components/AddTeamDialog.vue";
-import ConfirmDialog from "@/components/ConfirmDialog.vue";
-import { useGeneralStore } from "@/store/modules/general";
+import { computed, ref } from 'vue'
+import { useRouter } from 'vue-router'
+import AddTeamDialog from 'src/components/AddTeamDialog.vue'
+import ConfirmDialog from 'src/components/ConfirmDialog.vue'
+import { useGeneralStore } from 'src/stores/modules/general'
 
-const router = useRouter();
-const generalStore = useGeneralStore();
-const addTeamDialogRef = ref(null);
-const confirmDialogRef = ref(null);
+const router = useRouter()
+const generalStore = useGeneralStore()
+const addTeamDialogRef = ref(null)
+const confirmDialogRef = ref(null)
 
-const currentOrganisation = computed(() => generalStore.CurrentOrganisation);
+const currentOrganisation = computed(() => generalStore.CurrentOrganisation)
 
 const columns = [
-  { name: "name", label: "Nom", field: "name" },
-  { name: "actions", label: "Actions", align: "right" },
-];
+  { name: 'name', label: 'Nom', field: 'name' },
+  { name: 'actions', label: 'Actions', align: 'right' },
+]
 
 const openAddDialog = () => {
-  addTeamDialogRef.value.displayDialog();
-};
+  addTeamDialogRef.value.displayDialog()
+}
 
 const openConfirmDialog = (team) => {
   confirmDialogRef.value.displayDialog(
-    "Confirmation",
+    'Confirmation',
     `Voulez-vous vraiment supprimer l'équipe : ${team.name}`,
     () => {
-      generalStore.removeTeamFromOrganisation({ idTeam: team._id });
-    }
-  );
-};
+      generalStore.removeTeamFromOrganisation({ idTeam: team._id })
+    },
+  )
+}
 
 const selectTeam = async (team) => {
-  await generalStore.setCurrentTeam(team);
-  await router.push("/team");
-};
+  await generalStore.setCurrentTeam(team)
+  await router.push('/team')
+}
 </script>
