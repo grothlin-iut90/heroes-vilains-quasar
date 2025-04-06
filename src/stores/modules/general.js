@@ -161,18 +161,20 @@ export const useGeneralStore = defineStore("general", {
       console.log("Original team members:", team.members)
       let current = JSON.parse(JSON.stringify(team))
       try {
-        for (let i = 0; i < team.members.length; i++) {
-          let heroId = team.members[i]
-          console.log(`Fetching hero with ID: ${heroId}`)
-          let result = await getHeroByID(heroId)
-          if (result.error === 0) {
-            const hero = result.data[0]
-            console.log(`Fetched hero data for ID ${heroId}:`, hero)
-            current.members[i] = hero
-          } else {
-            console.log(`Error fetching hero with ID ${heroId}:`, result.data)
-          }
-        }
+        const updatedMembers = await Promise.all(
+          team.members.map(async (heroId) => {
+            console.log(`Fetching hero with ID: ${heroId}`)
+            const result = await getHeroByID(heroId)
+            if (result.error === 0) {
+              console.log(`Fetched hero data for ID ${heroId}:`, result.data[0])
+              return result.data[0]
+            } else {
+              console.log(`Error fetching hero with ID ${heroId}:`, result.data)
+              return null
+            }
+          })
+        )
+        current.members = updatedMembers.filter((member) => member !== null)
         console.log("Updated team members with hero data:", current.members)
         this.CurrentTeam = current
       } catch (err) {
@@ -194,18 +196,18 @@ export const useGeneralStore = defineStore("general", {
       }
     },
     async addHeroesToTeam(data) {
-      console.log("STORE: Add heroes to team");
-      let idTeam = data.idTeam;
-      let heroes = data.heroes;
+      console.log("STORE: Add heroes to team")
+      let idTeam = data.idTeam
+      let heroes = data.heroes
       try {
-        let result = await addHeroes(idTeam, heroes);
+        let result = await addHeroes(idTeam, heroes)
         if (result.error === 0) {
-          await this.setCurrentTeam(result.data);
+          await this.setCurrentTeam(result.data) // Ensure this is awaited
         } else {
-          console.log(result.data);
+          console.log(result.data)
         }
       } catch (err) {
-        console.error("Cas anormal dans addHeroesToTeam()", err);
+        console.error("Cas anormal dans addHeroesToTeam()", err)
       }
     },
     async removeHeroesFromTeam(data) {
@@ -244,11 +246,22 @@ export const useGeneralStore = defineStore("general", {
         let result = await updateHero(hero, this.OrganisationPassword);
         if (result.error === 0) {
           if (this.CurrentTeam) {
-            await this.setCurrentTeam(
-              this.CurrentOrganisation.teams.find(
-                (t) => t._id === this.CurrentTeam._id
-              )
+            // Ensure the team is updated with the latest data
+            const updatedTeam = this.CurrentOrganisation.teams.find(
+              (t) => t._id === this.CurrentTeam._id
             );
+
+            // Check if the updated hero exists in the team
+            const heroIndex = updatedTeam.members.findIndex(
+              (member) => member._id === hero._id
+            );
+
+            if (heroIndex !== -1) {
+              // Update the hero in the team directly
+              updatedTeam.members[heroIndex] = { ...updatedTeam.members[heroIndex], ...hero };
+            }
+
+            await this.setCurrentTeam(updatedTeam);
           }
           await this.getHeroAliases();
         } else {
