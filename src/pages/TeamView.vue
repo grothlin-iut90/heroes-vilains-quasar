@@ -35,9 +35,22 @@ const selectedHero = ref(null)
 
 const CurrentTeam = computed(() => generalStore.CurrentTeam)
 
+// Format the hero's power data
+const formatHeroPowers = (powers) => {
+  return powers
+    .map((power) => `${power.name} (${generalStore.HeroPowerTypes.find(pt => pt.value === power.type)?.label || 'Unknown'} - Level ${power.level})`)
+    .join(', ')
+}
+
 const columns = [
   { name: 'publicName', label: 'Nom public', field: 'publicName' },
   { name: 'realName', label: 'Nom réel', field: 'realName' },
+  {
+    name: 'powers',
+    label: 'Pouvoirs',
+    field: 'powers',
+    format: (val) => formatHeroPowers(val)
+  },
   { name: 'actions', label: 'Actions', align: 'left' },
 ]
 
