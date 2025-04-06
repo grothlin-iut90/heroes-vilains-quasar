@@ -1,6 +1,7 @@
 <script>
-import { ref } from 'vue'
-import EditHero from 'src/components/EditHero.vue'
+import { ref } from 'vue';
+import EditHero from 'src/components/EditHero.vue';
+import { useGeneralStore } from 'src/stores/modules/general';
 
 export default {
   name: 'EditHeroDialog',
@@ -8,32 +9,54 @@ export default {
   props: {
     hero: {
       type: Object,
-      required: true,
-    },
+      default: null
+    }
   },
-  setup(props, { emit }) {
-    const dialog = ref(false)
+  setup(props) {
+    const dialog = ref(false);
+    const generalStore = useGeneralStore();
 
-    const displayDialog = () => {
-      dialog.value = true
-    }
+    const closeDialog = () => {
+      dialog.value = false;
+    };
 
-    const saveHero = (updatedHero) => {
-      emit('valid', updatedHero)
-      dialog.value = false
-    }
+    const handleValid = async (updatedHeroData) => {
+      if (props.hero && props.hero._id) {
+        // Combine the updated data with the hero ID
+        const heroToUpdate = {
+          _id: props.hero._id,
+          realName: updatedHeroData.realName,
+          publicName: updatedHeroData.publicName,
+          powers: updatedHeroData.powers
+        };
+
+        console.log('Updating hero:', heroToUpdate);
+
+        // Call the updateHero method from the store
+        await generalStore.updateHero(heroToUpdate);
+
+        // Close the dialog after successful update
+        closeDialog();
+      } else {
+        console.error('Cannot update hero: Missing hero ID');
+      }
+    };
 
     return {
       dialog,
-      displayDialog,
-      saveHero,
-    }
+      closeDialog,
+      handleValid,
+    };
   },
-}
+};
 </script>
 
 <template>
-  <q-dialog v-model="dialog">
-    <EditHero :hero="hero" @cancel="dialog = false" @valid="saveHero" />
+  <q-dialog v-model="dialog" persistent>
+    <EditHero
+      :hero="hero"
+      @cancel="closeDialog"
+      @valid="handleValid"
+    />
   </q-dialog>
 </template>

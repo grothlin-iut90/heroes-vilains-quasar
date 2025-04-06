@@ -1,152 +1,59 @@
 <template>
-  <q-page class="q-pa-md">
-    <h1 class="text-h4 q-mb-md">Register</h1>
-    <q-form @submit.prevent="submit" @validation-error="onValidationError" ref="formRef" greedy>
-      <q-input
-        v-model="login"
-        label="Login"
-        filled
-        class="q-mb-md"
-        :rules="[(val) => !!val || 'Login is required']"
-      />
-      <q-input
-        v-model="password"
-        label="Password"
-        type="password"
-        filled
-        class="q-mb-md"
-        :rules="[
-          (val) => !!val || 'Password is required',
-          (val) => val.length >= 6 || 'Password must be at least 6 characters',
-        ]"
-      />
-      <q-input
-        v-model="hero"
-        label="Hero Name"
-        filled
-        class="q-mb-md"
-        :rules="[(val) => !!val || 'Hero name is required']"
-      />
-
-      <div class="row q-col-gutter-md q-mb-md">
-        <div class="col-12">
-          <q-btn
-            label="Verify Captcha"
-            color="secondary"
-            @click="verifyCaptcha"
-            :loading="verifyingCaptcha"
-          />
-        </div>
-      </div>
-
-      <div class="row q-col-gutter-md">
-        <div class="col-12">
-          <q-btn
-            type="submit"
-            label="Register"
-            color="primary"
-            :disable="!captchaToken"
-            :loading="submitting"
-          />
-        </div>
-      </div>
+  <q-page padding>
+    <h1>Register</h1>
+    <q-form ref="form" @submit="submit" class="q-gutter-md">
+      <q-input v-model="login" label="Login" :rules="[val => !!val || 'Login is required']" />
+      <q-input v-model="password" label="Password" type="password" :rules="[val => !!val || 'Password is required']" />
+      <q-input v-model="hero" label="Hero Name" :rules="[val => !!val || 'Hero Name is required']" />
+      <vue-recaptcha ref="recaptcha" :sitekey="captchaSiteKey" @verify="onCaptchaVerified"
+        @expired="onCaptchaExpired"></vue-recaptcha>
+      <q-btn type="submit" :disable="!isFormValid || !captchaToken" label="Register" color="primary" />
     </q-form>
-
-    <q-dialog v-model="errorDialog">
-      <q-card>
-        <q-card-section class="row items-center bg-negative text-white">
-          <div class="text-h6">Registration Error</div>
-          <q-space />
-          <q-btn icon="close" flat round dense v-close-popup />
-        </q-card-section>
-        <q-card-section>
-          <p>{{ errorMessage }}</p>
-        </q-card-section>
-        <q-card-actions align="right">
-          <q-btn flat label="OK" color="primary" v-close-popup />
-        </q-card-actions>
-      </q-card>
-    </q-dialog>
   </q-page>
 </template>
 
 <script setup>
-import { ref } from 'vue'
-import { useRouter } from 'vue-router'
-import { captchaSiteKey } from 'src/commons/config'
-import { useAuthStore } from 'src/stores/modules/auth'
-import { useRecaptcha } from 'vue-recaptcha-v3'
+import { ref, computed } from 'vue';
+import { useRouter } from 'vue-router';
+import { useAuthStore } from 'src/stores/modules/auth';
+import { captchaSiteKey } from "src/commons/config";
+import { VueRecaptcha } from "vue-recaptcha";
 
-const router = useRouter()
-const authStore = useAuthStore()
-const formRef = ref(null)
+const router = useRouter();
+const authStore = useAuthStore();
 
-// Form fields
-const login = ref('')
-const password = ref('')
-const hero = ref('')
+const login = ref('');
+const password = ref('');
+const hero = ref('');
+const captchaToken = ref(null);
+const form = ref(null);
 
-// UI states
-const captchaToken = ref(null)
-const verifyingCaptcha = ref(false)
-const submitting = ref(false)
-const errorDialog = ref(false)
-const errorMessage = ref('')
+const isFormValid = computed(() => {
+  return !!login.value && !!password.value && !!hero.value;
+});
 
-// Recaptcha setup
-const { executeRecaptcha } = useRecaptcha(captchaSiteKey)
+const onCaptchaVerified = (token) => {
+  captchaToken.value = token;
+};
 
-const verifyCaptcha = async () => {
-  try {
-    verifyingCaptcha.value = true
-    const token = await executeRecaptcha('register')
-    captchaToken.value = token
-    console.log('Captcha verified successfully')
-  } catch (error) {
-    errorMessage.value = 'Failed to verify captcha. Please try again.'
-    errorDialog.value = true
-    console.error('Captcha verification failed:', error)
-  } finally {
-    verifyingCaptcha.value = false
-  }
-}
-
-const onValidationError = (errors) => {
-  console.log('Validation errors:', errors)
-}
+const onCaptchaExpired = () => {
+  captchaToken.value = null;
+};
 
 const submit = async () => {
-  const isValid = await formRef.value.validate()
-  if (!isValid) return
+  if (!isFormValid.value || !captchaToken.value) return;
 
-  try {
-    submitting.value = true
+  const result = await authStore.registerUser({
+    login: login.value,
+    password: password.value,
+    hero: hero.value,
+    captchaToken: captchaToken.value,
+  });
 
-    if (!captchaToken.value) {
-      errorMessage.value = 'Please verify captcha first'
-      errorDialog.value = true
-      return
-    }
-
-    const result = await authStore.registerUser({
-      login: login.value,
-      password: password.value,
-      hero: hero.value,
-      captchaToken: captchaToken.value,
-    })
-
-    if (result.error === 0) {
-      router.push('/login')
-    } else {
-      errorMessage.value = result.data || 'Registration failed. Please try again.'
-      errorDialog.value = true
-    }
-  } catch (error) {
-    errorMessage.value = 'An unexpected error occurred. Please try again.'
-    errorDialog.value = true
-    console.error('Registration error:', error)
-  } finally {
-    submitting.value = false
+  if (result.error === 0) {
+    router.push('/login');
+  } else {
+    console.log(result.data);
   }
-}
+};
 </script>

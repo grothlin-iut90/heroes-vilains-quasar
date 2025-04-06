@@ -1,6 +1,6 @@
 <template>
   <div class="TeamView">
-    <h1>Équipe</h1>
+    <h1>Équipe: {{ CurrentTeam.name }}</h1>
     <div v-if="!CurrentTeam">
       <h2>Aucune équipe sélectionnée</h2>
       <q-btn color="positive" @click="router.push('/organisations')">OK</q-btn>
@@ -15,8 +15,7 @@
       </template>
     </q-table>
     <AddHeroDialog ref="addHeroDialogRef" />
-    <EditHeroDialog :hero="selectedHero" ref="editHeroDialogRef" @valid="update" />
-    <ConfirmDialog ref="confirmDialogRef" />
+    <EditHeroDialog ref="editHeroDialogRef" :hero="selectedHero" />
   </div>
 </template>
 
@@ -25,46 +24,44 @@ import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useGeneralStore } from 'src/stores/modules/general'
 import AddHeroDialog from 'src/components/AddHeroDialog.vue'
-import ConfirmDialog from 'src/components/ConfirmDialog.vue'
 import EditHeroDialog from 'src/components/EditHeroDialog.vue'
 
 const router = useRouter()
 const generalStore = useGeneralStore()
 
-const selectedHero = ref({ publicName: '', realName: '', powers: [] })
 const addHeroDialogRef = ref(null)
 const editHeroDialogRef = ref(null)
-const confirmDialogRef = ref(null)
+const selectedHero = ref(null)
 
 const CurrentTeam = computed(() => generalStore.CurrentTeam)
 
 const columns = [
   { name: 'publicName', label: 'Nom public', field: 'publicName' },
   { name: 'realName', label: 'Nom réel', field: 'realName' },
-  { name: 'actions', label: 'Actions', align: 'right' },
+  { name: 'actions', label: 'Actions', align: 'left' },
 ]
 
 const openAddDialog = () => {
-  addHeroDialogRef.value.displayDialog()
-}
-
-const removeHero = async (hero) => {
-  confirmDialogRef.value.displayDialog(
-    'Suppression',
-    `Voulez-vous vraiment enlever de l'équipe le héros ${hero.publicName}`,
-    () => {
-      generalStore.removeHeroesFromTeam({ idTeam: CurrentTeam.value._id, heroes: [hero._id] })
-    },
-  )
+  console.log('Opening AddHeroDialog...')
+  addHeroDialogRef.value.dialog = true
 }
 
 const selectHero = (hero) => {
-  selectedHero.value = hero
-  editHeroDialogRef.value.displayDialog()
+  console.log('Selected hero for editing:', hero)
+  // Create a deep copy of the hero to avoid modifying the original
+  selectedHero.value = JSON.parse(JSON.stringify(hero))
+  // Open the dialog
+  editHeroDialogRef.value.dialog = true
 }
 
-const update = async (hero) => {
-  hero._id = selectedHero.value._id
-  await generalStore.updateHero(hero)
+const removeHero = async (hero) => {
+  console.log('Removing hero from team:', hero)
+  if (CurrentTeam.value) {
+    const data = {
+      idTeam: CurrentTeam.value._id,
+      heroes: [hero._id]
+    }
+    await generalStore.removeHeroesFromTeam(data)
+  }
 }
 </script>

@@ -24,7 +24,7 @@ export default defineConfig((ctx) => {
     // https://v2.quasar.dev/quasar-cli-webpack/boot-files
     boot: [
       'i18n',
-      'axios'
+      'axios',
     ],
 
     // https://v2.quasar.dev/quasar-cli-webpack/quasar-config-file#css
@@ -81,7 +81,9 @@ export default defineConfig((ctx) => {
       server: {
         type: 'http'
       },
-      open: true // opens browser window automatically
+      port: 8080,
+      open: false, // opens browser window automatically
+      historyApiFallback: true,
     },
 
     // https://v2.quasar.dev/quasar-cli-webpack/quasar-config-file#framework

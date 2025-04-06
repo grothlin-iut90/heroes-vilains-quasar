@@ -1,5 +1,6 @@
 <script setup>
 import { defineProps } from 'vue'
+// import { useRouter } from 'vue-router';
 
 // Define the prop
 defineProps({
@@ -14,14 +15,9 @@ defineProps({
   <q-page class="q-pa-md">
     <div class="team-grid">
       <div v-for="(team, index) in teams" :key="index" class="team-item">
-        <q-card class="q-pa-md" bordered>
-          <q-card-section>
-            <div class="text-h6">{{ team.name }}</div>
-          </q-card-section>
-          <q-card-actions align="right">
-            <q-btn color="primary" label="Voir" />
-          </q-card-actions>
-        </q-card>
+        <q-card-actions align="left">
+          <q-btn class="button-team">{{ team.name }}</q-btn>
+        </q-card-actions>
       </div>
     </div>
   </q-page>
@@ -34,9 +30,16 @@ defineProps({
   gap: 16px; /* Space between items */
 }
 
+.button-team {
+  width: 100%; /* Full width of the card */
+  text-align: left; /* Align text to the left */
+  padding: 16px; /* Padding inside the button */
+  background-color: #f0f0f0; /* Light background color */
+  border-radius: 4px; /* Rounded corners */
+  transition: background-color 0.3s; /* Smooth transition for hover effect */
+}
+
 .team-item {
-  flex: 1 1 calc(25% - 16px); /* 4 items per row with spacing */
-  max-width: calc(25% - 16px); /* Ensure items don't exceed 25% width */
   box-sizing: border-box; /* Include padding and border in width calculation */
 }
 

@@ -1,13 +1,13 @@
 <template>
   <q-page>
-    <h1>Organisation</h1>
+    <h1>Organisation: {{ currentOrganisation.name }}</h1>
     <div v-if="!currentOrganisation">
       <h2>Aucune organisation sélectionnée</h2>
       <q-btn color="positive" @click="router.push('/organisations')">OK</q-btn>
     </div>
     <q-table v-else :rows="currentOrganisation.teams" :columns="columns" row-key="_id">
       <template v-slot:top>
-        <q-btn color="positive" @click="openAddDialog">Ajouter</q-btn>
+        <q-btn label="Ajouter une équipe" color="primary" @click="openAddDialog" />
       </template>
       <template v-slot:body-cell-actions="props">
         <q-btn color="warning" @click="selectTeam(props.row)">Modifier</q-btn>
@@ -34,12 +34,12 @@ const confirmDialogRef = ref(null)
 const currentOrganisation = computed(() => generalStore.CurrentOrganisation)
 
 const columns = [
-  { name: 'name', label: 'Nom', field: 'name' },
-  { name: 'actions', label: 'Actions', align: 'right' },
+  { name: 'name', label: 'Nom', field: 'name', align: 'right' },
+  { name: 'actions', label: 'Actions', align: 'left' },
 ]
 
 const openAddDialog = () => {
-  addTeamDialogRef.value.displayDialog()
+  addTeamDialogRef.value.dialog = true
 }
 
 const openConfirmDialog = (team) => {
@@ -57,3 +57,9 @@ const selectTeam = async (team) => {
   await router.push('/team')
 }
 </script>
+
+<style scoped>
+.text-center {
+  text-align: center;
+}
+</style>

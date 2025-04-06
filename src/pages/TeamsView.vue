@@ -2,8 +2,8 @@
   <q-page>
     <h1>Teams</h1>
     <q-btn color="primary" @click="newTeam" class="mb-4">Ajouter</q-btn>
-    <TeamsList :teams="Teams" />
     <NewTeamDialog ref="newTeamDialogRef" />
+    <TeamsList :teams="Teams" />
   </q-page>
 </template>
 
@@ -19,7 +19,7 @@ const newTeamDialogRef = ref(null)
 const Teams = computed(() => generalStore.Teams)
 
 const newTeam = () => {
-  newTeamDialogRef.value.displayDialog()
+  newTeamDialogRef.value.dialog = true
 }
 
 onMounted(() => {

@@ -29,30 +29,33 @@ export const useGeneralStore = defineStore("general", {
     CurrentOrganisation: null,
     OrganisationPassword: "",
     HeroPowerTypes: [
-      "force",
-      "vitesse",
-      "endurance",
-      "magie",
-      "effrayant",
-      "furtivité",
-      "stupidité",
+      { label: "Force", value: 1 },
+      { label: "Vitesse", value: 2 },
+      { label: "Endurance", value: 3 },
+      { label: "Magie", value: 4 },
+      { label: "Effrayant", value: 5 },
+      { label: "Furtivité", value: 6 },
+      { label: "Stupidité", value: 7 },
     ],
+
   }),
   actions: {
     setOrganisationPassword(password) {
       this.OrganisationPassword = password;
     },
     async getHeroAliases() {
-      console.log("STORE: Get all hero aliases");
+      console.log("STORE: Get all hero aliases")
       try {
-        let result = await getAliases();
+        let result = await getAliases()
         if (result.error === 0) {
-          this.HeroAliases = result.data;
+          console.log("Fetched hero aliases:", result.data)
+          this.HeroAliases = result.data
+          return result.data
         } else {
-          console.log(result.data);
+          console.log(result.data)
         }
       } catch (err) {
-        console.error("Cas anormal dans getHeroAliases()", err);
+        console.error("Error in getHeroAliases()", err)
       }
     },
     async getHero(heroId) {
@@ -155,25 +158,25 @@ export const useGeneralStore = defineStore("general", {
       }
     },
     async setCurrentTeam(team) {
-      console.log("Original team members:", team.members);
-      let current = JSON.parse(JSON.stringify(team));
+      console.log("Original team members:", team.members)
+      let current = JSON.parse(JSON.stringify(team))
       try {
         for (let i = 0; i < team.members.length; i++) {
-          let heroId = team.members[i];
-          console.log(`Fetching hero with ID: ${heroId}`);
-          let result = await getHeroByID(heroId);
+          let heroId = team.members[i]
+          console.log(`Fetching hero with ID: ${heroId}`)
+          let result = await getHeroByID(heroId)
           if (result.error === 0) {
-            const hero = result.data[0];
-            console.log(`Fetched hero data for ID ${heroId}:`, hero);
-            current.members[i] = hero;
+            const hero = result.data[0]
+            console.log(`Fetched hero data for ID ${heroId}:`, hero)
+            current.members[i] = hero
           } else {
-            console.log(`Error fetching hero with ID ${heroId}:`, result.data);
+            console.log(`Error fetching hero with ID ${heroId}:`, result.data)
           }
         }
-        console.log("Updated team members with hero data:", current.members);
-        this.CurrentTeam = current;
+        console.log("Updated team members with hero data:", current.members)
+        this.CurrentTeam = current
       } catch (err) {
-        console.error("Error in setCurrentTeam:", err);
+        console.error("Error in setCurrentTeam:", err)
       }
     },
     async createTeam(data) {
@@ -222,7 +225,10 @@ export const useGeneralStore = defineStore("general", {
     },
     async createHero(hero) {
       try {
+        console.log("STORE: Create new hero");
+        console.log("Hero data:", hero);
         let result = await createHero(hero);
+        console.log("Result of createHero:", result);
         if (result.error === 0) {
           await this.getHeroAliases();
           return result.data;
